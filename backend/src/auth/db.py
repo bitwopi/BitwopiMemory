@@ -6,7 +6,7 @@ from sqlalchemy import String, Boolean, Integer
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import Mapped, mapped_column
 
-from backend.src.config import DATABASE_URL, BASE
+from config import DATABASE_URL, BASE
 
 
 class User(SQLAlchemyBaseUserTable, BASE):

@@ -1,10 +1,11 @@
 from sqlalchemy import Integer, String, Boolean
-from sqlalchemy.orm import Mapped, mapped_column
-
-from backend.src.config import BASE
+from sqlalchemy.orm import Mapped, mapped_column, declarative_base
 
 
-class User(BASE):
+Base = declarative_base()
+
+
+class User(Base):
     __tablename__ = "user"
 
     id: Mapped[int] = mapped_column(Integer(), unique=True, primary_key=True, nullable=False, autoincrement=True)

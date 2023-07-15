@@ -1,11 +1,11 @@
 from typing import Optional
 
 from fastapi import Depends, Request
-from fastapi_users import IntegerIDMixin, BaseUserManager
+from fastapi_users import IntegerIDMixin, BaseUserManager, FastAPIUsers
 from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
 
-from backend.src.auth.config import SECRET
-from backend.src.auth.db import User, get_user_db
+from .config import SECRET, auth_backend
+from .db import User, get_user_db
 
 
 class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
@@ -19,3 +19,15 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
 
 async def get_user_manager(user_db: SQLAlchemyUserDatabase = Depends(get_user_db)):
     yield UserManager(user_db)
+
+fastapi_users = FastAPIUsers[User, int](
+    get_user_manager,
+    [auth_backend],
+)
+
+
+async def get_enabled_backends():
+    return [auth_backend]
+
+
+current_active_user = fastapi_users.current_user(active=True, get_enabled_backends=get_enabled_backends)
