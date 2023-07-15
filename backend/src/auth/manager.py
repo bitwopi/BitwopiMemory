@@ -1,6 +1,7 @@
 from typing import Optional
 
 from fastapi import Depends, Request
+from fastapi.openapi.models import Response
 from fastapi_users import IntegerIDMixin, BaseUserManager, FastAPIUsers
 from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
 
@@ -14,7 +15,11 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
 
     async def on_after_register(self, user: User, request: Optional[Request] = None):
         print(f"User {user.id} has registered.")
-        return {'status': "success"}
+        return {'detail': "user successfully registered"}
+
+    async def on_after_login(self, user: User, request: Optional[Request] = None, response: Optional[Response] = None):
+        print(f"User {user.id} has logged in.")
+        return {'msg': "user successfully logged in"}
 
 
 async def get_user_manager(user_db: SQLAlchemyUserDatabase = Depends(get_user_db)):
