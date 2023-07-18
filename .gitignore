@@ -1,3 +1,5 @@
 .env
 venv
 .idea
+backend/BMemory_db.db
+backend/migrations/versions

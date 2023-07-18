@@ -5,7 +5,8 @@ from fastapi import FastAPI
 from auth.config import auth_backend
 from auth.schemas import UserRead, UserCreate, UserUpdate
 from auth.manager import fastapi_users
-from auth.router import router
+from auth.router import router as auth_router
+from memory.router import router as memory_router
 
 app = FastAPI()
 
@@ -24,7 +25,8 @@ app.include_router(
     prefix="/users",
     tags=["Users"],
 )
-app.include_router(router)
+app.include_router(auth_router)
+app.include_router(memory_router)
 
 
 @app.get("/")
