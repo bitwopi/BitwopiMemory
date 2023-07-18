@@ -14,11 +14,11 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
     verification_token_secret = SECRET
 
     async def on_after_register(self, user: User, request: Optional[Request] = None):
-        print(f"User {user.id} has registered.")
+        print(f"{user.__repr__()} has registered.")
         return {'detail': "user successfully registered"}
 
     async def on_after_login(self, user: User, request: Optional[Request] = None, response: Optional[Response] = None):
-        print(f"User {user.id} has logged in.")
+        print(f"{user.__repr__()} has logged in.")
         return {'msg': "user successfully logged in"}
 
 
@@ -27,12 +27,12 @@ async def get_user_manager(user_db: SQLAlchemyUserDatabase = Depends(get_user_db
 
 fastapi_users = FastAPIUsers[User, int](
     get_user_manager,
-    [auth_backend],
+    [auth_backend, ],
 )
 
 
 async def get_enabled_backends():
-    return [auth_backend]
+    return [auth_backend, ]
 
 
 current_active_user = fastapi_users.current_user(active=True, get_enabled_backends=get_enabled_backends)

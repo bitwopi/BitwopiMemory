@@ -1,15 +1,19 @@
-from typing import AsyncGenerator
+import sys
+
+sys.path.append('../..')
 
 from fastapi import Depends
 from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase, SQLAlchemyBaseUserTable
 from sqlalchemy import String, Boolean, Integer
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Mapped, mapped_column, declarative_base
 
-from config import DATABASE_URL, BASE
+from backend.src.db_connect import get_async_session
+
+Base = declarative_base()
 
 
-class User(SQLAlchemyBaseUserTable, BASE):
+class User(SQLAlchemyBaseUserTable, Base):
     id: Mapped[int] = mapped_column(Integer(), unique=True, primary_key=True, nullable=False, autoincrement=True)
     username: Mapped[str] = mapped_column(String(length=30), unique=True, index=True, nullable=False)
     email: Mapped[str] = mapped_column(String(length=320), unique=True, index=True, nullable=False)
@@ -17,15 +21,6 @@ class User(SQLAlchemyBaseUserTable, BASE):
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     is_superuser: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     is_verified: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
-
-
-engine = create_async_engine(DATABASE_URL)
-async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
-
-
-async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
-    async with async_session_maker() as session:
-        yield session
 
 
 async def get_user_db(session: AsyncSession = Depends(get_async_session)):
